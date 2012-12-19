@@ -3,10 +3,10 @@ class ResultTest extends PHPUnit_Framework_TestCase
 {
     public function testSetErrorCode()
     {
-        $r = new Pseudo\Result;
+        $r = new Pseudo\Pdo\Result;
         $r->setErrorCode("HY000");
         $this->assertEquals("HY000", $r->getErrorCode());
-        $this->setExpectedException("Pseudo\\Exception");
+        $this->setExpectedException("Pseudo\Pdo\\Exception");
         $r->setErrorCode("121");
     }
 
@@ -20,7 +20,7 @@ class ResultTest extends PHPUnit_Framework_TestCase
             'id'  => 2,
             'foo' => 'baz'
         ];
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->addRow($row1);
         $r->addRow($row2);
 
@@ -39,11 +39,11 @@ class ResultTest extends PHPUnit_Framework_TestCase
             'bar'
         ];
 
-        $r = new Pseudo\Result;
+        $r = new Pseudo\Pdo\Result;
         $r->addRow($row);
         $this->assertEquals(1, count($r->getRows()));
 
-        $r = new Pseudo\Result;
+        $r = new Pseudo\Pdo\Result;
         $r->addRow($row, $params);
         $this->assertEquals(1, count($r->getRows($params)));
     }
@@ -54,7 +54,7 @@ class ResultTest extends PHPUnit_Framework_TestCase
             'id'  => 1,
             'foo' => 'bar'
         ];
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->addRow($row);
         $this->assertEquals($row, $r->nextRow());
         $this->assertEquals(null, $r->nextRow());

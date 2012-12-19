@@ -15,8 +15,8 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
                 1     => 'bar'
             ]
         ];
-        $r = new Pseudo\Result([$rows]);
-        $s = new Pseudo\PdoStatement();
+        $r = new Pseudo\Pdo\Result([$rows]);
+        $s = new Pseudo\Pdo\PdoStatement();
         $s->setResult($r);
         $fetchResult = $s->fetchAll();
         $this->assertEquals($expectedFetchResult, $fetchResult);
@@ -28,8 +28,8 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
             'id'  => 1,
             'foo' => 'bar'
         ];
-        $r = new Pseudo\Result([$rows]);
-        $s = new Pseudo\PdoStatement();
+        $r = new Pseudo\Pdo\Result([$rows]);
+        $s = new Pseudo\Pdo\PdoStatement();
         $s->setResult($r);
         $fetchResult = $s->fetchAll(PDO::FETCH_ASSOC);
         $this->assertEquals([$rows], $fetchResult);
@@ -47,8 +47,8 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
                 1     => 'bar'
             ]
         ];
-        $r = new Pseudo\Result([$rows]);
-        $s = new Pseudo\PdoStatement();
+        $r = new Pseudo\Pdo\Result([$rows]);
+        $s = new Pseudo\Pdo\PdoStatement();
         $s->setResult($r);
         $fetchResult = $s->fetchAll(PDO::FETCH_NUM);
         $this->assertEquals($expectedFetchResult, $fetchResult);
@@ -66,8 +66,8 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
                 'foo' => 'bar'
             ]
         ];
-        $r = new Pseudo\Result([$rows]);
-        $s = new Pseudo\PdoStatement();
+        $r = new Pseudo\Pdo\Result([$rows]);
+        $s = new Pseudo\Pdo\PdoStatement();
         $s->setResult($r);
         $fetchResult = $s->fetchAll(PDO::FETCH_OBJ);
         $this->assertEquals($expectedFetchResult, $fetchResult);
@@ -75,8 +75,8 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
 
     public function testRowCount()
     {
-        $s = new Pseudo\PdoStatement();
-        $r = new Pseudo\Result();
+        $s = new Pseudo\Pdo\PdoStatement();
+        $r = new Pseudo\Pdo\Result();
         $s->setResult($r);
         $this->assertEquals(0, $s->rowCount());
         $r->setAffectedRowCount(5);
@@ -85,36 +85,36 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
 
     public function testErrorCode()
     {
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->setErrorCode("HY000");
-        $p = new Pseudo\PdoStatement($r);
+        $p = new Pseudo\Pdo\PdoStatement($r);
         $this->assertEquals("HY000", $p->errorCode());
     }
 
     public function testErrorInfo()
     {
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->setErrorInfo("Storage engine error");
-        $p = new Pseudo\PdoStatement($r);
+        $p = new Pseudo\Pdo\PdoStatement($r);
         $this->assertEquals("Storage engine error", $p->errorInfo());
     }
 
     public function testColumnCount()
     {
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->addRow(
             [
                 'id'  => 1,
                 'foo' => 'bar'
             ]
         );
-        $p = new Pseudo\PdoStatement($r);
+        $p = new Pseudo\Pdo\PdoStatement($r);
         $this->assertEquals(2, $p->columnCount());
     }
 
     public function testSetFetchMode()
     {
-        $p = new Pseudo\PdoStatement();
+        $p = new Pseudo\Pdo\PdoStatement();
         $success = $p->setFetchMode(PDO::FETCH_ASSOC);
         $this->assertEquals(1, $success);
         $success = $p->setFetchMode(456);
@@ -132,8 +132,8 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
             'foo' => 'baz'
         ];
 
-        $r = new Pseudo\Result();
-        $p = new Pseudo\PdoStatement($r);
+        $r = new Pseudo\Pdo\Result();
+        $p = new Pseudo\Pdo\PdoStatement($r);
 
         $data = $p->fetch();
         $this->assertEquals(false, $data);
@@ -152,16 +152,16 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
             'id' => 1,
             'foo' => 'bar',
         ];
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->addRow($row1);
-        $p = new Pseudo\PdoStatement($r);
+        $p = new Pseudo\Pdo\PdoStatement($r);
         $p->bindColumn(2, $test);
         $p->fetch(PDO::FETCH_BOUND);
         $this->assertEquals('bar', $test);
         unset($test);
 
         $r->reset();
-        $p = new Pseudo\PdoStatement($r);
+        $p = new Pseudo\Pdo\PdoStatement($r);
         $p->bindColumn('foo', $test);
         $p->fetch(PDO::FETCH_BOUND);
         $this->assertEquals('bar', $test);
@@ -175,9 +175,9 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
             'foo' => 'bar',
         ];
         $testObject = (object) $row1;
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->addRow($row1);
-        $s = new Pseudo\PdoStatement($r);
+        $s = new Pseudo\Pdo\PdoStatement($r);
         $this->assertEquals($testObject, $s->fetchObject());
     }
 
@@ -191,9 +191,9 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
             'bar'
         ];
 
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->addRow($row1, $params1);
-        $s = new Pseudo\PdoStatement($r);
+        $s = new Pseudo\Pdo\PdoStatement($r);
 
         $this->assertEquals(true, $s->execute($params1));
         $this->assertEquals(false, $s->execute());
@@ -202,7 +202,7 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
     public function testBindParam()
     {
         $param = 'foo';
-        $s = new Pseudo\PdoStatement();
+        $s = new Pseudo\Pdo\PdoStatement();
         $this->assertEquals(true, $s->bindParam(1, $param));
         $param = 'bar';
         $this->assertEquals([1 => 'bar'], $s->getBoundParams());
@@ -211,7 +211,7 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
     public function testBindValue()
     {
         $param = 'foo';
-        $s = new Pseudo\PdoStatement();
+        $s = new Pseudo\Pdo\PdoStatement();
         $this->assertEquals(true, $s->bindValue(1, $param));
         $param = 'bar';
         $this->assertEquals([1 => 'foo'], $s->getBoundParams());
@@ -224,9 +224,9 @@ class PdoStatementTest extends PHPUnit_Framework_TestCase
             'foo' => 'bar',
         ];
 
-        $r = new Pseudo\Result();
+        $r = new Pseudo\Pdo\Result();
         $r->addRow($row1);
-        $s = new Pseudo\PdoStatement($r);
+        $s = new Pseudo\Pdo\PdoStatement($r);
 
         $this->assertEquals('bar', $s->fetchColumn(1));
         $this->assertEquals(false, $s->fetchColumn(0));

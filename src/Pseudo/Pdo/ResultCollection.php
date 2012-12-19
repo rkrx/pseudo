@@ -1,5 +1,5 @@
 <?php
-namespace Pseudo;
+namespace Pseudo\Pdo;
 
 class ResultCollection implements \Countable
 {

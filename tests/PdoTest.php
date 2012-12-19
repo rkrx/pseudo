@@ -11,7 +11,7 @@ class PdoTest extends PHPUnit_Framework_TestCase
             ]
         ];
 
-        $p = new Pseudo\Pdo();
+        $p = new Pseudo\Pdo\Pdo();
         $p->mock($sql1, $result1);
         $queries = $p->getMockedQueries();
         $this->assertTrue($queries->exists($sql1));
@@ -42,8 +42,8 @@ class PdoTest extends PHPUnit_Framework_TestCase
 
     public function testQueryReturnsMockedResults()
     {
-        $p = new Pseudo\Pdo();
-        $expectedRows = new Pseudo\Result();
+        $p = new Pseudo\Pdo\Pdo();
+        $expectedRows = new Pseudo\Pdo\Result();
         $expectedRows->addRow(
             [
                 "foo" => "bar",
@@ -58,8 +58,8 @@ class PdoTest extends PHPUnit_Framework_TestCase
     public function testLastInsertId()
     {
         $sql = "INSERT INTO foo VALUES ('1')";
-        $r = new Pseudo\Result();
-        $p = new Pseudo\Pdo();
+        $r = new Pseudo\Pdo\Result();
+        $p = new Pseudo\Pdo\Pdo();
         $p->mock($sql, $r);
         $p->query($sql);
         $this->assertEquals(0, $p->lastInsertId());
@@ -71,8 +71,8 @@ class PdoTest extends PHPUnit_Framework_TestCase
     public function testErrorInfo()
     {
         $sql = "SELECT 1";
-        $r = new Pseudo\Result();
-        $p = new Pseudo\Pdo();
+        $r = new Pseudo\Pdo\Result();
+        $p = new Pseudo\Pdo\Pdo();
         $p->mock($sql, $r);
         $p->query($sql);
         $this->assertEquals(0, $p->lastInsertId());
@@ -84,8 +84,8 @@ class PdoTest extends PHPUnit_Framework_TestCase
     public function testErrorCode()
     {
         $sql = "SELECT 1";
-        $r = new Pseudo\Result();
-        $p = new Pseudo\Pdo();
+        $r = new Pseudo\Pdo\Result();
+        $p = new Pseudo\Pdo\Pdo();
         $p->mock($sql, $r);
         $p->query($sql);
         $this->assertEquals(0, $p->lastInsertId());
@@ -96,7 +96,7 @@ class PdoTest extends PHPUnit_Framework_TestCase
 
     public function testTransactionStates()
     {
-        $p = new Pseudo\Pdo();
+        $p = new Pseudo\Pdo\Pdo();
         $this->assertEquals($p->inTransaction(), false);
 
         $this->assertEquals($p->beginTransaction(), true);
@@ -115,8 +115,8 @@ class PdoTest extends PHPUnit_Framework_TestCase
     public function testExec()
     {
         $sql = "SELECT 1";
-        $p = new Pseudo\Pdo();
-        $r = new Pseudo\Result();
+        $p = new Pseudo\Pdo\Pdo();
+        $r = new Pseudo\Pdo\Result();
         $p->mock($sql, $r);
         $results = $p->exec($sql);
         $this->assertEquals(0, $results);
@@ -127,22 +127,22 @@ class PdoTest extends PHPUnit_Framework_TestCase
     public function testPrepare()
     {
         $sql = "SELECT * FROM test WHERE foo='bar'";
-        $p = new Pseudo\Pdo();
+        $p = new Pseudo\Pdo\Pdo();
         $p->mock($sql);
         $statement = $p->prepare($sql);
-        $this->assertInstanceOf("Pseudo\\PdoStatement", $statement);
+        $this->assertInstanceOf("Pseudo\Pdo\\PdoStatement", $statement);
     }
 
     public function testLoad()
     {
-        $r = new Pseudo\ResultCollection();
+        $r = new Pseudo\Pdo\ResultCollection();
         $r->addQuery("SELECT 1", [[1]]);
         $serialized = serialize($r);
         if (file_exists('testload')) {
             unlink('testload');
         }
         file_put_contents('testload', $serialized);
-        $p = new Pseudo\Pdo();
+        $p = new Pseudo\Pdo\Pdo();
         $p->load('testload');
         $this->assertEquals($r, $p->getMockedQueries());
         unlink('testload');
@@ -150,13 +150,13 @@ class PdoTest extends PHPUnit_Framework_TestCase
 
     public function testSave()
     {
-        $r = new Pseudo\ResultCollection();
+        $r = new Pseudo\Pdo\ResultCollection();
         $r->addQuery("SELECT 1", [[1]]);
         $serialized = serialize($r);
         if (file_exists('testsave')) {
             unlink('testsave');
         }
-        $p = new Pseudo\Pdo($r);
+        $p = new Pseudo\Pdo\Pdo($r);
         $p->save('testsave');
         $queries = unserialize(file_get_contents('testsave'));
         $this->assertEquals($r, $queries);
